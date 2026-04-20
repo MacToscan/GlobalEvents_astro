@@ -1,0 +1,72 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Ficha Artista | Global Events">
+  <main class="artist-page">
+    
+    <section class="artist-header">
+      <div class="container">
+        <a href="/" class="back-link">← Volver a la lista</a>
+        <h1 class="artist-name" id="profile-name">Cargando...</h1>
+        <span class="artist-category-tag" id="profile-category">...</span>
+      </div>
+    </section>
+
+    <section class="artist-gallery">
+      <div class="container">
+        <div class="slider-wrapper">
+          <button class="slider-btn slider-btn--prev" id="btn-prev">❮</button>
+          <div class="slider-track" id="slider-track"></div>
+          <button class="slider-btn slider-btn--next" id="btn-next">❯</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="artist-details">
+      <div class="container details-grid">
+        
+        <div class="details-main">
+          <h2 class="details-title">Sobre el Artista</h2>
+          <div class="details-text">
+            <p id="profile-desc">Información no disponible.</p>
+          </div>
+
+          <div class="social-section">
+              <div class="details-links" id="social-links-container"></div>
+          </div>
+        </div>
+
+        <aside class="details-sidebar">
+          
+          <div id="artist-video-section" class="artist-video-section" style="display: none; margin-top: 0; padding-top: 0; border-top: none; margin-bottom: 30px;">
+            <div class="video-player-wrapper">
+              <iframe id="main-video-player" src="" title="Reproductor de YouTube" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            </div>
+            <div id="video-playlist-buttons" class="video-playlist-buttons" style="justify-content: center;"></div>
+          </div>
+
+          <div class="info-card">
+            <h3>Ficha Técnica</h3>
+            <ul>
+              <li><strong>Categoría:</strong> <span id="sidebar-category">-</span></li>
+              <li><strong>Zona:</strong> <span id="profile-zone">-</span></li>
+            </ul>
+            
+            <div class="cta-container">
+              <a href="/contact" class="btn btn--gold">+ INFO</a>
+              <p class="cta-note">Respuesta en menos de 24h</p>
+            </div>
+          </div>
+
+        </aside>
+
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    import '../main.js';
+  </script>
+</Layout>

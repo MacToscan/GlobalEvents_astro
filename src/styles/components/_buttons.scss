@@ -1,0 +1,27 @@
+@use '../abstracts/mixins' as *;
+
+.btn {
+  @include btn-base;
+
+  &--gold {
+    @include btn-variant-gold;
+  }
+
+  // REVISIÓN DEL OUTLINE PARA QUE SE VEA BIEN
+  &--outline {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.3); // Borde blanco sutil por defecto
+    color: #FFF; // Texto blanco
+
+    &:hover {
+      border-color: #BF953F; // Al pasar ratón se pone dorado
+      color: #BF953F;
+      background: rgba(0,0,0,0.5);
+    }
+  }
+  
+  &--full {
+    width: 100%;
+    display: flex;
+  }
+}

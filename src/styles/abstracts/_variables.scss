@@ -1,0 +1,33 @@
+// Paleta de Colores
+$color-bg-dark: #050505;
+$color-surface: #121212;
+$color-text-primary: #F0F0F0;
+$color-text-muted: #A0A0A0;
+
+// Gradiente Dorado
+$gold-gradient: linear-gradient(
+  135deg, 
+  #BF953F 0%, 
+  #FCF6BA 50%, 
+  #AA771C 100%
+);
+
+// FUENTES 
+$font-heading: 'Playfair Display', serif;
+$font-body: 'Barlow', sans-serif;
+
+// Espaciado
+$spacing-unit: 8px;
+$spacing-xl: 12px;
+$spacing-l: 4px; 
+
+// --- CAMBIOS PARA MONITOR 27" ---
+// Aumentamos el ancho máximo estándar
+$container-max-width: 1200px; 
+// Creamos un nuevo ancho máximo para pantallas gigantes
+$container-max-width-large: 1600px; 
+
+// Breakpoints
+$bp-tablet: 768px;
+$bp-desktop: 1024px;
+$bp-large: 1600px; // <--- Nuevo punto de ruptura (Monitores grandes)

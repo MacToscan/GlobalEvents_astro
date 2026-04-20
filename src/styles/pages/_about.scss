@@ -1,0 +1,71 @@
+@use '../abstracts/variables' as *;
+@use '../abstracts/mixins' as *;
+
+.about-page {
+  padding-top: 140px; // Espacio generoso para el header fijo
+  padding-bottom: 80px;
+  background-color: $color-bg-dark; // Fondo negro
+  min-height: 100vh;
+}
+
+.about-container {
+  max-width: 800px; // Columna central de lectura (No muy ancha)
+  margin: 0 auto;
+}
+
+.about-section {
+  margin-bottom: $spacing-unit * 6;
+  animation: fadeIn 0.8s ease-out; // Pequeña animación de entrada
+}
+
+.about-title {
+  font-family:'Playfair Display', 'Cinzel', serif;
+  font-size: 2.5rem;
+  color: $color-text-primary; // Blanco
+  margin-bottom: $spacing-unit * 3;
+  text-align: left; // O center, según prefieras
+  border-left: 4px solid #BF953F; // Detalle dorado a la izquierda
+  padding-left: $spacing-unit * 2;
+  line-height: 1.1;
+
+  @include mq($bp-tablet) {
+    font-size: 3rem;
+  }
+}
+
+.about-text {
+  p {
+    font-family: 'Barlow', 'Montserrat', sans-serif;
+    font-size: 1.05rem;
+    line-height: 1.8; // Muy importante para leer bien textos largos
+    color: #CCC; // Gris claro, no blanco puro para no cansar la vista
+    margin-bottom: $spacing-unit * 2;
+    text-align: justify; // Justificado se ve muy bloque editorial
+    
+    // Negritas dentro del texto
+    strong {
+      color: white;
+      font-weight: 600;
+    }
+  }
+}
+
+// Separador entre las dos secciones
+.about-divider {
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(191, 149, 63, 0.3), transparent);
+  width: 100%;
+  margin: $spacing-unit * 6 0;
+}
+
+// Botón final
+.about-cta {
+  text-align: center;
+  margin-top: $spacing-unit * 6;
+}
+
+// Keyframes sencillos
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}

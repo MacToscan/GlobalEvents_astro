@@ -1,0 +1,160 @@
+@use '../abstracts/variables' as *;
+@use '../abstracts/mixins' as *;
+
+.card {
+  background-color: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 12px;
+  overflow: hidden;
+  position: sticky; 
+  top: 10%;       
+  margin-bottom: 40px; 
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  transition: transform 0.3s ease;
+
+  // --- 1. MÓVIL (Vertical) ---
+  display: flex;
+  flex-direction: column;
+  // En móvil dejamos que la altura sea automática según el texto
+  // para no romper nada si escribe mucho.
+  min-height: 450px; 
+
+  // --- 2. DESKTOP Y PANTALLAS GRANDES (Horizontal) ---
+  @include mq($bp-desktop) {
+    display: grid;
+    grid-template-columns: 65% 35%; // 65% Foto, 35% Texto (Proporción áurea visual)
+    
+    // ¡AQUÍ ESTÁ LA CLAVE DE LA UNIFORMIDAD!
+    // Fijamos una altura exacta. Todas las cartas medirán lo mismo.
+    height: 500px; 
+    
+    // Quitamos el margin-bottom grande porque el sticky se encarga
+    margin-bottom: 60px; 
+  }
+
+  // --- IMAGEN ---
+  &__img-wrapper {
+    position: relative;
+    width: 100%;
+    
+    // Altura fija en móvil para uniformidad visual
+    height: 300px; 
+
+    // En Desktop, la foto ocupa el 100% de la altura de la tarjeta (500px)
+    @include mq($bp-desktop) {
+      height: 100%; 
+      border-right: 1px solid #333; 
+    }
+  }
+
+  &__image {
+    width: 100%;
+    height: 100%;
+    // 'cover' es el truco mágico: rellena el hueco recortando lo que sobre
+    // sin deformar la foto jamás.
+    object-fit: cover; 
+    object-position: center top; // Enfoca preferiblemente la parte superior (caras)
+    display: block;
+    transition: transform 0.5s ease;
+  }
+
+  &:hover .card__image {
+    transform: scale(1.05);
+  }
+
+  // --- TEXTO / CONTENIDO ---
+  // --- TEXTO / CONTENIDO ---
+  &__content {
+    // 1. PADDING REDUCIDO
+    // Bajamos a 20px/25px para ganar el máximo espacio posible para el texto
+    padding: 20px; 
+    
+    display: flex;
+    flex-direction: column;
+    
+    // 2. LA ESTRUCTURA FLEXIBLE
+    // Esto hace que los elementos se distribuyan usando todo el alto disponible
+    justify-content: flex-start; 
+    align-items: flex-start;
+    
+    background: linear-gradient(to bottom, #1a1a1a, #111);
+    overflow: hidden; 
+
+    @include mq($bp-desktop) {
+      padding: 25px 30px; 
+    }
+  }
+
+  // --- ARRIBA: La Frase Gancho ---
+  &__category {
+    color: #BF953F;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    padding-top: $spacing-l;
+    letter-spacing: 2px;
+    margin-bottom: 10px; // Un poco de aire antes del nombre
+    font-weight: 700;
+    width: 100%;
+  }
+
+  // --- MEDIO: El Nombre del Artista ---
+  &__title {
+    font-family: $font-heading;
+    padding-top: $spacing-xl *2;
+    color: white;
+    font-size: 1.5rem;
+    line-height: 1.1;
+    margin: 0 0 10px;
+
+    // ✨ TRUCO: flex-grow: 1
+    // Esto le dice al título: "Ocupa todo el espacio libre que haya en medio".
+    // Si el nombre es corto, dejará hueco. Si es largo, usará el hueco.
+    // (Ojo: solo funciona si el contenedor padre tiene altura fija, que ya la tiene)
+    // flex-grow: 1; 
+    // ^ A veces flex-grow puede dar problemas de centrado, mejor dejamos que fluya natural
+    // y usamos el margin-top auto en el botón.
+
+    // SEGURO ANTI-DESBORDAMIENTO:
+    // Permitimos hasta 4 líneas si hace falta, ya que ahora tenemos sitio.
+    display: -webkit-box;
+    line-clamp: 4; 
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+
+    @include mq($bp-desktop) {
+      // Usamos clamp para que se adapte al ancho
+      font-size: clamp(1.7rem, 2.2vw, 2.2rem); 
+    }
+  }
+
+  // Descripción extra (si existe)
+  p {
+     font-size: 0.9rem;
+     padding-top: $spacing-l;
+     color: #ccc;
+     margin-bottom: 15px;
+     display: -webkit-box;
+     line-clamp: 2;
+     -webkit-box-orient: vertical;
+     overflow: hidden;
+  }
+  &__zone {
+    color: #888;
+    font-size: 0.9rem;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  // --- ABAJO: El Botón ---
+  .btn {
+    // ✨ LA CLAVE MAESTRA:
+    // 'margin-top: auto' es como un imán que empuja el botón al fondo del todo,
+    // independientemente de cuánto texto haya arriba.
+    margin-top: auto; 
+    padding-top: $spacing-xl;
+    align-self: flex-start;
+  }
+
+}

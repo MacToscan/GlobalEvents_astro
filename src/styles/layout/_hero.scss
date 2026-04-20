@@ -1,0 +1,253 @@
+@use '../abstracts/variables' as *; 
+@use '../abstracts/mixins' as *;
+
+.hero {
+  // Parallax / Stacking Effect
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  
+  background-image: url('/hero-bg-dark.jpg'); 
+  background-size: cover;
+  background-position: center;
+  
+  // Overlay oscuro
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.7); 
+    z-index: -1;
+  }
+
+  &__content {
+    width: 90%;
+    max-width: $container-max-width;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  // Logo Redondo en el Hero
+  &__brand-img {
+    width: 250px;
+    height: auto;
+    margin-top: $spacing-xl * 4;
+    
+
+    @include mq($bp-tablet) {
+      width: 540px;
+    }
+  }
+
+  &__title {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+
+    @include mq($bp-desktop) {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+  }
+
+  &__subtitle {
+    font-family: 'Playfair Display', Times, serif;
+    font-size: 1rem;
+    color: $color-text-primary;
+    margin-bottom: $spacing-unit * 3;
+    max-width: 600px;
+  }
+
+  // Caja del botón "Solicitar Presupuesto"
+  &__cta-box {
+    margin-top: $spacing-xl *2;
+    margin-bottom: $spacing-unit * 2;
+    width: 100%; 
+    // En escritorio podríamos querer que no sea full width, pero el btn base se adapta
+  }
+}
+
+/* ESTILOS DEL CONTADOR MECÁNICO */
+.counter-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 0.5rem; /* Separación con el buscador */
+    margin-top: -10px;
+}
+
+.counter-label {
+    color: #BF953F; /* El dorado de tu marca */
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.mechanical-counter {
+    display: flex;
+    gap: 5px; /* Espacio entre los números */
+}
+
+.digit {
+    display: inline-block;
+    width: 30px;
+    height: 40px;
+    background-color: #111; /* Fondo casi negro */
+    color: #e1d6d6;            /* Número blanco */
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 45px;
+    text-align: center;
+    border-radius: 4px;
+    position: relative;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+    font-family: 'Courier New', monospace; /* Fuente tipo máquina */
+    overflow: hidden;
+}
+
+/* El truco de la línea en medio para parecer mecánico */
+.digit::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 1.5px;
+    background: rgba(0, 0, 0, 0.3); /* Línea sutil de corte */
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1); /* Brillo debajo */
+}
+
+// --- BUSCADOR ---
+.search-bar {
+  background: rgba(20, 20, 20, 0.6); 
+  backdrop-filter: blur(12px);
+  padding: $spacing-unit *2;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-unit * 2;
+  width: 90%; 
+
+  @include mq($bp-tablet) {
+    flex-direction: row;
+    align-items: flex-end;
+    gap: $spacing-unit * 2;
+  }
+
+  &__group { 
+    flex: 1; 
+    text-align: left; 
+  }
+  
+  label { 
+    display: block; 
+    font-size: 0.8rem; 
+    color: $color-text-muted; 
+    margin-bottom: 4px; 
+  }
+  
+  input, select {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 8px 0;
+    font-family: inherit;
+    transition: border-color 0.3s;
+
+    &:focus { 
+      outline: none; 
+      border-bottom-color: #BF953F; 
+    }
+    option { 
+      background-color: $color-bg-dark; 
+    }
+  }
+
+  // --- REFACTORIZACIÓN AQUÍ ---
+  // Ya no definimos colores ni bordes. Solo comportamiento de layout.
+  &__btn {
+    width: 100%; // En móvil ocupa todo el ancho
+    
+    @include mq($bp-tablet) {
+      width: auto; // En escritorio se ajusta al texto
+    }
+  }
+}
+
+// ESTILOS DE LA LISTA DE SUGERENCIAS
+.suggestions-list {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: #111;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  z-index: 1000; // Aseguramos que flote sobre todo
+
+  // --- EL ARREGLO PARA EL SCROLL ---
+  max-height: 250px;       // Altura máxima fija
+  overflow-y: auto;        // Habilita scroll vertical interno
+  -webkit-overflow-scrolling: touch; // Suavidad en móviles
+  
+  box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  li {
+    padding: 12px 20px;
+    color: #ccc;
+    font-size: 0.95rem;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    transition: all 0.2s;
+    text-align: left;
+
+    &:last-child { border-bottom: none; }
+
+    &:hover {
+      background: #222;
+      color: #BF953F; // Dorado al pasar el ratón
+      padding-left: 25px; // Pequeño movimiento a la derecha
+    }
+    
+    // Resaltar la coincidencia en negrita (opcional)
+    strong { color: white; }
+  }
+}
+
+// Pequeño ajuste para que el input no tenga bordes redondeados abajo si la lista está abierta
+.search-bar__group input.open {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-color: transparent;
+}

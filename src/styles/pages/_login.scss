@@ -1,0 +1,145 @@
+@use '../abstracts/variables' as *;
+@use '../abstracts/mixins' as *;
+
+// 1. CONFIGURACIÓN DE LA PÁGINA (FONDO NEGRO PURO)
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  
+  // Fondo negro puro para disimular los bordes del logo PNG
+  background-color: #000; 
+}
+
+// 2. MODIFICADOR PARA EL HEADER (Solo en Login)
+.header--login {
+  position: absolute; // Para que flote sobre el fondo
+  top: 0;
+  left: 0;
+  width: 100%;
+  border: none; // Sin bordes
+  z-index: 10;
+  padding-top: 20px;
+
+  // Centrar el contenido
+  .header__container {
+    justify-content: center;
+  }
+
+  // Logo más grande específico para login
+  .header__logo {
+    height: 160px; // El tamaño que querías
+    width: auto;
+    object-fit: contain;
+    // Opcional: un pequeño filtro para que se fusione mejor si el negro no es exacto
+    mix-blend-mode: lighten; 
+  }
+}
+
+// 3. TARJETA DE LOGIN
+.login-container {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.login-card {
+  background: rgba(20, 20, 20, 0.9); // Casi opaco
+  padding: $spacing-unit * 5;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.6); // Sombra más fuerte
+  width: 100%;
+  max-width: 350px;
+  text-align: center;
+  overflow: hidden;
+  animation: slideUp 0.6s ease-out;
+}
+
+// ... ESTILOS DE TEXTO Y FORMULARIO (Igual que antes) ...
+.login-title {
+  font-family: $font-heading;
+  font-size: 2rem;
+  color: $color-text-primary;
+  margin-bottom: $spacing-unit;
+  margin-top: $spacing-unit * 1;
+  padding-top: $spacing-xl *10;
+}
+
+.login-subtitle {
+  font-family: $font-body;
+  color: $color-text-muted;
+  font-size: 0.95rem;
+  margin-bottom: $spacing-unit * 4;
+  margin-top: $spacing-unit * 1;
+}
+
+.form-group {
+  margin-bottom: $spacing-unit * 3;
+  margin-top: $spacing-unit;
+  text-align: left;
+
+  label {
+    display: block;
+    color: #BF953F;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    font-weight: 600;
+
+  }
+}
+
+.input-wrapper {
+  position: relative;
+  
+  i {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255,255,255,0.4);
+  }
+
+  input {
+    width: 85%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    padding: 10px 10px 10px 30px; 
+    color: white;
+    font-family: $font-body;
+    font-size: 1rem;
+    transition: all 0.3s;
+
+    &:focus {
+      outline: none;
+      border-bottom-color: #BF953F;
+    }
+    
+    &::placeholder {
+      color: rgba(255,255,255,0.2);
+    }
+  }
+}
+
+.back-link {
+  display: block;
+  margin-top: $spacing-unit * 3;
+  color: rgba(255,255,255,0.4);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.3s;
+  
+  &:hover { color: white; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}

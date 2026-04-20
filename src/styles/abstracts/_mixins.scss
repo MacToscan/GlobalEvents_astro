@@ -1,0 +1,54 @@
+@use 'variables' as *;
+
+@mixin mq($width) {
+  @media (min-width: $width) {
+    @content;
+  }
+}
+
+// Texto con efecto dorado
+@mixin text-gold {
+  background: $gold-gradient;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 700;
+}
+
+// =========================================
+// MIXINS DE BOTONES
+// =========================================
+
+// 1. Estructura Base (Sin colores)
+@mixin btn-base {
+  display: inline-flex; // Mejor que inline-block para centrar texto/iconos
+  align-items: center;
+  justify-content: center;
+  padding: 12px 30px;
+  border-radius: 50px; // Pill shape
+  text-decoration: none;
+  text-transform: uppercase;
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: none;
+  line-height: 1; // Evita alturas raras
+}
+
+// 2. Variante Dorada (Luxury)
+@mixin btn-variant-gold {
+  background: $gold-gradient;
+  color: #000; // Negro para contraste
+  box-shadow: 0 4px 15px rgba(191, 149, 63, 0.3);
+
+  &:hover {
+    transform: translateY(-3px); // Levitar
+    box-shadow: 0 6px 20px rgba(191, 149, 63, 0.5); // Más brillo
+    filter: brightness(1.1);
+  }
+
+  &:active {
+    transform: translateY(-1px); // Efecto click
+  }
+}

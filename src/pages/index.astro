@@ -1,11 +1,197 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
+import { db } from '../firebase.js'; 
+import { collection, getDocs } from 'firebase/firestore';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+// 1. FUNCIÓN DE SLUGS (PARA QUE LOS ENLACES NO SE ROMPAN)
+const createSlug = (text) => {
+  if (!text) return '';
+  return text.toString().toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, '-').replace(/[^\w\-]+/g, '')
+    .replace(/\-\-+/g, '-').replace(/^-+/, '').replace(/-+$/, '');
+};
+
+// 2. DESCARGA DE DATOS
+const querySnapshot = await getDocs(collection(db, "artists"));
+let allArtists = []; // Cambiamos const por let para poder ordenar la lista
+
+querySnapshot.forEach((doc) => {
+  const data = doc.data();
+  if (data.name) {
+    allArtists.push({ 
+      id: doc.id, 
+      slug: createSlug(data.name), 
+      ...data 
+    });
+  }
+});
+
+// NUEVA LÍNEA: Ordenar exactamente igual que en el administrador
+allArtists.sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
+
+// 3. FILTRADO DE DESTACADOS (Ahora ya vendrán en el orden correcto)
+const featuredArtists = allArtists.filter(a => a.isFeatured).slice(0, 6);
+
+// Datos para selectores y contador
+const categories = [...new Set(allArtists.map(a => a.category))].filter(Boolean).sort();
+const zones = [...new Set(allArtists.map(a => a.zone))].filter(Boolean).sort();
+const totalArtists = allArtists.length;
+const digits = String(totalArtists).padStart(3, '0').split('');
 ---
 
-<Layout>
-	<Welcome />
-</Layout>
+<Layout title="Global Events | Professional Solutions">
+  
+  <section class="hero" id="home">
+    <div class="container hero__content">
+      <img src="/img/logo.png" alt="Global Events logo" class="hero__brand-img">
+      <h1 class="hero__title">GLOBAL EVENTS</h1>
+      <p class="hero__subtitle">Contrata a los mejores artistas para tu evento</p>
+
+      <div class="counter-wrapper">
+        <span class="counter-label">ARTISTAS DISPONIBLES:</span>
+        <div class="mechanical-counter">
+          {digits.map(d => <span class="digit">{d}</span>)}
+        </div>
+      </div>
+
+      <div class="search-bar">
+        <div class="search-bar__group" style="position: relative;">
+  <input type="text" id="search-name" placeholder="Buscar artista..." autocomplete="off">
+  <ul id="custom-suggestions" class="suggestions-list" data-lenis-prevent></ul>
+</div>
+        <div class="search-bar__group">
+          <select id="search-zone">
+            <option value="">Todas las zonas</option>
+            {zones.map(z => <option value={z}>{z}</option>)}
+          </select>
+        </div>
+        <div class="search-bar__group">
+          <select id="search-category">
+            <option value="">Todas las categorías</option>
+            {categories.map(c => <option value={c}>{c}</option>)}
+          </select>
+        </div>
+        <button class="btn btn--gold search-bar__btn" id="main-search-btn">Buscar</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="featured-artists" style="background-color: #050505; padding: 60px 0;">
+    <div class="container"> 
+      <div class="artist-grid" id="artist-grid-container">
+        {featuredArtists.map((artist) => (
+          <article class="card" 
+                   data-name={artist.name.toLowerCase()} 
+                   data-category={artist.category} 
+                   data-zone={artist.zone}
+                   style="display: grid;"> <div class="card__img-wrapper">
+              <a href={`/artist/${artist.slug}`}>
+                <img src={artist.images[0]} alt={artist.name} class="card__image" loading="lazy" />
+              </a>
+            </div>
+            <div class="card__content">
+              {artist.homeDescription ? (
+                <p style="color:#BF953F; font-size:0.9rem; margin-bottom:5px; font-style:italic;">"{artist.homeDescription}"</p>
+              ) : (
+                <span class="card__category">{artist.category}</span>
+              )}
+              <h3 class="card__title">{artist.name}</h3>
+              <p class="card__zone">📍 {artist.zone}</p>
+              
+              <a href={`/artist/${artist.slug}`} class="btn btn--gold" style="margin-top: 25px; align-self: flex-start; display: inline-block;">Ver Ficha</a>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="other-talents-section">
+    <div class="section-header">
+      <h2 class="section-title">Otros Talentos</h2>
+    </div>
+    <div class="carousel-container-relative">
+      <div class="mini-carousel-wrapper">
+        <div id="mini-carousel-track" class="mini-carousel-track">
+          </div>
+      </div>
+    </div>
+  </section>
+
+<script is:inline define:vars={{ allArtistsNames: allArtists.map(a => a.name) }}>
+  function initPredictor() {
+    const searchBtn = document.getElementById('main-search-btn');
+    const searchInput = document.getElementById('search-name');
+    const suggestionsBox = document.getElementById('custom-suggestions');
+
+    if (!searchInput || !suggestionsBox || !searchBtn) return;
+
+    // 1. Lógica de Sugerencias (Predictor)
+    searchInput.addEventListener('input', () => {
+      const val = searchInput.value.toLowerCase().trim();
+      suggestionsBox.innerHTML = ''; 
+      if (!val) { suggestionsBox.style.display = 'none'; return; }
+
+      const matches = allArtistsNames.filter(name => name.toLowerCase().includes(val));
+      
+      if (matches.length > 0) {
+        matches.slice(0, 10).forEach(name => {
+          const li = document.createElement('li');
+          li.textContent = name.toUpperCase();
+          li.style.cursor = 'pointer';
+          li.onclick = () => { 
+            searchInput.value = name; 
+            suggestionsBox.style.display = 'none';
+            searchBtn.click(); // Dispara la búsqueda real
+          };
+          suggestionsBox.appendChild(li);
+        });
+        suggestionsBox.style.display = 'block';
+      } else { 
+        suggestionsBox.style.display = 'none'; 
+      }
+    });
+
+    // 2. Lógica del Botón Buscar (Llama a executeSearch de main.js)
+    searchBtn.onclick = (e) => {
+      e.preventDefault();
+      
+      const nameVal = searchInput.value.trim();
+      const zoneVal = document.getElementById('search-zone').value;
+      const catVal = document.getElementById('search-category').value;
+
+      if (typeof window.executeSearch === 'function') {
+        // AHORA SÍ: Llama a la función que filtra categorías, zonas y nombres
+        window.executeSearch();
+        
+        // Scroll hasta los resultados
+        document.getElementById('artist-grid-container')?.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start' 
+        });
+      } else {
+        // Fallback por si acaso
+        const cards = document.querySelectorAll('.card');
+        cards.forEach(card => {
+          const matchName = card.dataset.name?.includes(nameVal.toLowerCase());
+          const matchCat = catVal === "" || card.dataset.category === catVal;
+          const matchZone = zoneVal === "" || card.dataset.zone === zoneVal;
+          card.style.display = (matchName && matchCat && matchZone) ? 'grid' : 'none';
+        });
+      }
+    };
+
+    // Cerrar sugerencias al hacer clic fuera
+    document.addEventListener('click', (ev) => {
+      if (ev.target !== searchInput) suggestionsBox.style.display = 'none';
+    });
+  }
+
+  // Inicialización segura
+  if (document.readyState === 'complete') {
+    initPredictor();
+  } else {
+    window.addEventListener('load', initPredictor);
+  }
+</script>

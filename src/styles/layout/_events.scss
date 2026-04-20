@@ -1,0 +1,324 @@
+@use '../abstracts/variables' as *;
+@use '../abstracts/mixins' as *;
+
+// =========================================
+// ESTILOS ESPECÍFICOS: DELOREAN FESTIVAL
+// =========================================
+
+// --- Variables Neón Locales ---
+$neon-pink: #ff00ff;
+$neon-blue: #00ffff;
+$neon-purple: #bc13fe;
+$neon-gold: #FFD700;
+
+// --- FONDO GENERAL (Mobile First) ---
+.delorean-body {
+  background-color: #080808; 
+  background-image: 
+    radial-gradient(circle at 20% 30%, rgba($neon-purple, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba($neon-blue, 0.15) 0%, transparent 50%);
+  background-attachment: fixed;
+  
+  // SEGURIDAD: Evita el scroll lateral en móvil pase lo que pase
+  overflow-x: hidden; 
+  width: 100%;
+}
+
+// --- SECCIÓN HERO SPLIT ---
+.delorean-hero {
+  // 1. BASE (MÓVIL)
+  padding: 100px 0 40px; 
+  display: flex;
+  flex-direction: column;
+  
+  // 2. DESKTOP
+  @include mq($bp-desktop) {
+    padding: 140px 0 80px;
+    min-height: 80vh; // Ocupa pantalla
+    justify-content: center;
+  }
+
+  &__grid {
+    // 1. BASE (MÓVIL): Una columna, orden natural
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    width: 100%;
+
+    // 2. DESKTOP: Grid 2 columnas
+    @include mq($bp-desktop) {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 50px;
+        align-items: center;
+    }
+    
+    // 3. LARGE (Monitor 27")
+    @include mq($bp-large) {
+        gap: 80px; // Más aire entre foto y texto
+        max-width: 1600px; // Aprovecha el ancho extra
+    }
+  }
+
+  &__image-box {
+    position: relative;
+    // Móvil: Un poco más pequeño que el ancho total para que el neón no se salga
+    width: 90%; 
+    margin: 0 auto; 
+
+    @include mq($bp-desktop) {
+        width: 100%;
+        margin: 0;
+    }
+
+    // Marco de neón
+    .neon-border {
+        position: absolute;
+        // MÓVIL: Márgenes negativos muy pequeños para no romper layout
+        top: -8px; left: -8px; right: -8px; bottom: -8px;
+        border: 2px solid $neon-pink;
+        box-shadow: 0 0 10px $neon-pink; // Glow suave
+        z-index: -1;
+        border-radius: 12px;
+
+        // DESKTOP: Expandimos el efecto
+        @include mq($bp-desktop) {
+             top: -15px; left: -15px; right: -15px; bottom: -15px;
+             box-shadow: 0 0 20px $neon-pink, inset 0 0 20px $neon-pink;
+        }
+    }
+
+    .delorean-main-img {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+        transform: rotate(-2deg);
+        transition: transform 0.5s ease;
+
+        &:hover { transform: rotate(0deg) scale(1.02); }
+    }
+  }
+
+  &__content {
+    // 1. MÓVIL: Centrado
+    text-align: center;
+    padding: 0 10px;
+
+    // 2. DESKTOP: Alineado izquierda
+    @include mq($bp-desktop) { 
+        text-align: left; 
+        padding: 0;
+    }
+
+    .delorean-subtitle {
+        display: block;
+        font-family: $font-body;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-size: 0.85rem;
+        color: $neon-blue;
+        margin-bottom: 10px;
+        font-weight: 600;
+
+        @include mq($bp-desktop) {
+            font-size: 1rem;
+            letter-spacing: 4px;
+        }
+    }
+
+    .delorean-title {
+        font-family: 'Cinzel', serif;
+        // MÓVIL: Tamaño seguro fijo
+        font-size: 2.8rem; 
+        line-height: 1.1;
+        margin: 5px 0;
+        
+        // Efecto metálico
+        background: linear-gradient(to right, #edefc0, #dfe3d8, #e6da56);
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        word-break: break-word; // Evita desbordamiento de palabras largas
+
+        // DESKTOP
+        @include mq($bp-desktop) { font-size: 4.5rem; }
+
+        // LARGE (Monitor Roxana)
+        @include mq($bp-large) { font-size: 6rem; } 
+    }
+
+    .delorean-divider {
+        height: 4px;
+        width: 80px;
+        background: linear-gradient(to right, $neon-pink, $neon-purple, $neon-blue);
+        margin: 15px auto; // Centrado en móvil
+        
+        @include mq($bp-desktop) { 
+            margin: 20px 0; // Izquierda en desktop
+            width: 120px;
+        }
+    }
+
+    .delorean-intro {
+        font-size: 1rem;
+        line-height: 1.5;
+        color: #ddd;
+        margin-bottom: 30px;
+        
+        @include mq($bp-desktop) { font-size: 1.1rem; line-height: 1.6; }
+        @include mq($bp-large) { font-size: 1.25rem; max-width: 90%; }
+
+        strong { color: white; }
+    }
+  }
+}
+
+// --- SECCIONES DE CONTENIDO ---
+.delorean-section {
+    padding: 50px 0; 
+    border-top: 1px solid rgba($neon-blue, 0.1);
+
+    @include mq($bp-desktop) { padding: 80px 0; }
+    @include mq($bp-large) { padding: 100px 0; }
+
+    &.delorean-experience {
+        background: rgba(0,0,0,0.3);
+    }
+}
+
+// Títulos Neón Generales
+.neon-text {
+    color: white;
+    text-shadow: 0 0 10px $neon-pink;
+    @include mq($bp-desktop) {
+        text-shadow: 0 0 10px $neon-pink, 0 0 20px $neon-pink, 0 0 40px $neon-purple;
+    }
+}
+.neon-text-gold {
+    color: $neon-gold;
+    text-shadow: 0 0 10px $neon-gold;
+}
+
+// GRID EXPERIENCIA
+.experience-grid {
+    display: grid;
+    gap: 20px;
+    margin-top: 30px;
+    // MÓVIL: 1 Columna
+    grid-template-columns: 1fr;
+
+    // DESKTOP: 3 Columnas
+    @include mq($bp-tablet) { 
+        grid-template-columns: repeat(3, 1fr); 
+        gap: 30px; 
+    }
+    
+    // LARGE: Más espacio
+    @include mq($bp-large) { gap: 50px; }
+}
+
+.experience-card {
+    background: rgba(255,255,255,0.03);
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.05);
+    text-align: center;
+    
+    @include mq($bp-desktop) { padding: 30px; }
+
+    &:hover {
+        border-color: $neon-blue;
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba($neon-blue, 0.2);
+    }
+
+    .experience-icon {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+        &.neon-pink { color: $neon-pink; text-shadow: 0 0 15px $neon-pink; }
+        &.neon-blue { color: $neon-blue; text-shadow: 0 0 15px $neon-blue; }
+        &.neon-purple { color: $neon-purple; text-shadow: 0 0 15px $neon-purple; }
+        
+        @include mq($bp-desktop) { font-size: 3rem; }
+    }
+
+    h3 { color: white; margin-bottom: 10px; font-weight: 600; font-size: 1.1rem; @include mq($bp-desktop){ font-size: 1.3rem; } }
+    p { color: #aaa; font-size: 0.9rem; line-height: 1.4; @include mq($bp-desktop){ font-size: 1rem; } }
+}
+
+// SECCIÓN MÚSICA (Split inverso)
+.music-container-split {
+    // MÓVIL: Flex columna
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    
+    // DESKTOP: Grid 2 columnas
+    @include mq($bp-desktop) {
+        display: grid;
+        gap: 60px;
+        grid-template-columns: 1fr 1fr;
+        align-items: center;
+        
+        // Orden visual: Texto izquierda, Foto derecha
+        .music-image { order: 2; }
+        .music-content { order: 1; }
+    }
+
+    @include mq($bp-large) { gap: 100px; }
+}
+
+.music-content {
+    text-align: center;
+    @include mq($bp-desktop) { text-align: left; }
+
+    .delorean-text-large {
+        font-size: 1.1rem; color: white; margin-bottom: 15px;
+        strong { color: $neon-gold; }
+        @include mq($bp-desktop) { font-size: 1.3rem; margin-bottom: 25px;}
+        @include mq($bp-large) { font-size: 1.5rem; }
+    }
+    p { 
+        color: #ccc; line-height: 1.6; font-size: 0.95rem; 
+        @include mq($bp-desktop) { font-size: 1rem; }
+        @include mq($bp-large) { font-size: 1.1rem; }
+    }
+}
+
+.music-image {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    width: 100%;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+
+    img { width: 100%; display: block; transition: transform 0.5s; }
+    
+    .neon-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top right, rgba($neon-purple, 0.4), rgba($neon-blue, 0.2));
+        mix-blend-mode: overlay;
+    }
+    &:hover img { transform: scale(1.05); }
+}
+
+// CTA FINAL
+.delorean-cta-final {
+    background: linear-gradient(to top, #000, rgba($neon-purple, 0.1));
+    padding: 60px 0 80px; 
+    @include mq($bp-desktop) { padding: 100px 0; }
+}
+
+.btn--large {
+    width: 80%; // Móvil: ancho completo
+    padding: 15px 20px;
+    
+    @include mq($bp-desktop) {
+        width: auto; // Desktop: automático
+        padding: 15px 50px;
+        font-size: 1.1rem;
+        letter-spacing: 2px;
+    }
+}

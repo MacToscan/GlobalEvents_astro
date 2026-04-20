@@ -1,0 +1,107 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Contacto | Global Events">
+  <main class="contact-page">
+    
+    <section class="contact-header">
+      <div class="container">
+        <h1 class="section-title">Hablemos</h1>
+        <p class="section-subtitle">¿Tienes un evento en mente? Nosotros ponemos el talento.</p>
+      </div>
+    </section>
+
+    <section class="contact-body">
+      <div class="container">
+        <div class="contact-grid">
+          
+          <div class="contact-info">
+            <h3>Información de Contacto</h3>
+            <p>Estamos disponibles para asesorarte en la contratación de artistas para bodas, eventos corporativos y festivales.</p>
+            
+            <div class="info-item">
+              <i class="fa-solid fa-phone"></i>
+              <div>
+                <strong>Teléfono</strong>
+                <span>+34 622 300 985</span>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <i class="fa-solid fa-envelope"></i>
+              <div>
+                <strong>Email</strong>
+                <a href="mailto:info@rdglobalevents.com">info@rdglobalevents.com</a>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <i class="fa-solid fa-location-dot"></i>
+              <div>
+                <strong>Oficina</strong>
+                <span>C/ Dels pins, Piera (Barcelona)</span>
+              </div>
+            </div>
+
+            <div class="social-links-contact">
+              <a href="https://www.instagram.com/globaleventsoficial?igsh=MWc5NWdkcXg5eXo3Zw==" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+              <a href="https://www.facebook.com/share/1BgHAZ2Pm5/" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fa-brands fa-facebook"></i></a>
+              <a href="https://www.tiktok.com/@globaleventsoficial?_r=1&_t=ZN-93GNXXQr7sx" target="_blank" rel="noopener noreferrer" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+            </div>
+          </div>
+
+          <div class="contact-form-wrapper">
+            <form class="contact-form" id="contact-form" name="contact" method="POST" data-netlify="true">
+              
+              <input type="hidden" name="form-name" value="contact" />
+              <div style="position: absolute; left: -9999px; opacity: 0;">
+                <label for="honeypot-field">Si eres humano, deja este campo vacío</label>
+                <input type="text" id="honeypot-field" name="bot-field" tabindex="-1" autocomplete="off">
+              </div>
+              <div class="form-group">
+                <label for="name">Nombre completo</label>
+                <input type="text" id="name" name="name" placeholder="Ej: Juan Pérez" required>
+              </div>
+
+              <div class="form-group">
+                <label for="email">Correo electrónico</label>
+                <input type="email" id="email" name="email" placeholder="Ej: hola@correo.com" required>
+              </div>
+
+              <div class="form-group">
+                <label for="message">Cuéntanos tu idea</label>
+                <textarea id="message" name="message" placeholder="¿Qué tipo de evento es? ¿Fecha? ¿Qué necesitas?" required></textarea>
+              </div>
+
+              <div class="form-legal-group">
+                <label class="checkbox-label">
+                  <input type="checkbox" id="accept-privacy" name="accept-privacy" required>
+                  <span>He leído y acepto la <a href="/politicaprivacidad" target="_blank">Política de Privacidad</a>.*</span>
+                </label>
+              
+                <label class="checkbox-label">
+                  <input type="checkbox" id="accept-promo" name="accept-promo">
+                  <span>Deseo recibir comunicaciones comerciales y promociones.</span>
+                </label>
+              </div>
+              
+              <div class="legal-info-basic">
+                <strong>Información Básica sobre Protección de Datos:</strong><br>
+                <strong>Responsable:</strong> RD. GLOBAL NEXUS SL.<br>
+                <strong>Finalidad:</strong> Atender sus consultas y/o solicitudes.<br>
+                <strong>Derechos:</strong> Acceder, rectificar y suprimir los datos, así como otros derechos, como se explica en la información adicional.<br>
+                <strong>Información adicional:</strong> Puede consultar la información detallada en nuestra <a href="/politicaprivacidad" target="_blank">Política de Privacidad</a>.
+              </div>
+
+              <button type="submit" class="btn btn--gold btn--full">Enviar Mensaje</button>
+
+            </form>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+</Layout>

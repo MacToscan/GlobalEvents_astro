@@ -1,0 +1,171 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { db } from '../../firebase.js'; 
+import { collection, getDocs } from 'firebase/firestore';
+
+export async function getStaticPaths() {
+  const querySnapshot = await getDocs(collection(db, "artists"));
+  const paths = [];
+
+  const createSlug = (text) => {
+    return text.toString().toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/\s+/g, '-')
+      .replace(/[^\w\-]+/g, '')
+      .replace(/\-\-+/g, '-')
+      .replace(/^-+/, '')
+      .replace(/-+$/, '');
+  };
+
+  querySnapshot.forEach((doc) => {
+    const artistData = doc.data();
+    if (!artistData.name) return; 
+    
+    paths.push({
+      params: { slug: createSlug(artistData.name) },
+      props: { artist: artistData }, 
+    });
+  });
+
+  return paths;
+}
+
+// 2. RECIBIMOS LOS DATOS DEL ARTISTA
+const { artist } = Astro.props;
+
+// 3. FUNCIÓN MÁGICA PARA YOUTUBE (Copiada de tu web original)
+const getYouTubeEmbedUrl = (url) => {
+  if (!url) return null;
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+  const match = url.match(regExp);
+  return (match && match[2].length === 11) ? `https://www.youtube.com/embed/${match[2]}` : url;
+};
+
+// Preparamos los vídeos usando el filtro de YouTube
+const mainVideo = artist.videoUrl || (artist.socials && artist.socials.youtube);
+const rawVideos = [mainVideo, artist.videoUrl2, artist.videoUrl3].filter(Boolean);
+const allVideos = rawVideos.map(getYouTubeEmbedUrl).filter(Boolean);
+---
+
+<Layout title={`Contratar a ${artist.name} | ${artist.category} | Global Events`}>
+  <main class="artist-page">
+    
+    <section class="artist-header">
+      <div class="container">
+        <a href="/" class="back-link">← Volver a la lista</a>
+        <h1 class="artist-name">{artist.name}</h1>
+        <span class="artist-category-tag">{artist.category}</span>
+      </div>
+    </section>
+
+    <section class="artist-gallery">
+      <div class="container">
+        <div class="slider-wrapper">
+          <button class="slider-btn slider-btn--prev" id="btn-prev">❮</button>
+          <div class="slider-track" id="slider-track">
+            {artist.images && artist.images.map((img, index) => (
+              <div class={`slide ${index === 0 ? 'is-active' : ''}`}>
+                <img src={img} alt={artist.name} />
+              </div>
+            ))}
+          </div>
+          <button class="slider-btn slider-btn--next" id="btn-next">❯</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="artist-details">
+      <div class="container details-grid">
+        
+        <div class="details-main">
+          <h2 class="details-title">Sobre el Artista</h2>
+          <div class="details-text">
+            {/* set:html permite que se vean los saltos de línea que Roxana escribe */}
+            <p set:html={artist.description?.replace(/\n/g, '<br/>') || "Información no disponible."}></p>
+          </div>
+
+          <div class="social-section">
+            <div class="details-links">
+              {artist.socials?.instagram && <a href={artist.socials.instagram} target="_blank" class="link-item"><i class="fa-brands fa-instagram"></i> Instagram</a>}
+              {artist.socials?.facebook && <a href={artist.socials.facebook} target="_blank" class="link-item"><i class="fa-brands fa-facebook"></i> Facebook</a>}
+              {artist.socials?.website && <a href={artist.socials.website} target="_blank" class="link-item"><i class="fa-solid fa-globe"></i> Web</a>}
+            </div>
+          </div>
+        </div>
+
+        <aside class="details-sidebar">
+          
+          {allVideos.length > 0 && (
+            <div id="artist-video-section" class="artist-video-section" style="margin-bottom: 30px;">
+              <div class="video-player-wrapper">
+                <iframe 
+                  id="main-video-player" 
+                  src={allVideos[0]} 
+                  title="Reproductor de YouTube" 
+                  frameborder="0" 
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                  allowfullscreen>
+                </iframe>
+              </div>
+              <div class="video-playlist-buttons" style="justify-content: center; display: flex; gap: 10px; margin-top: 10px;">
+                {allVideos.map((video, idx) => (
+                  <button class={idx === 0 ? 'active' : ''} data-video={video}>
+                    Vídeo {idx + 1}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div class="info-card">
+            <h3>Ficha Técnica</h3>
+            <ul>
+              <li><strong>Categoría:</strong> <span>{artist.category}</span></li>
+              <li><strong>Zona:</strong> <span>{artist.zone}</span></li>
+            </ul>
+            
+            <div class="cta-container">
+              <a href="/contact" class="btn btn--gold">+ INFO</a>
+              <p class="cta-note">Respuesta en menos de 24h</p>
+            </div>
+          </div>
+
+        </aside>
+
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // MOTOR PARA QUE FUNCIONEN LAS FLECHAS DE LAS FOTOS Y LOS BOTONES DE VÍDEO
+    const slides = document.querySelectorAll('.slide');
+    const prevBtn = document.getElementById('btn-prev');
+    const nextBtn = document.getElementById('btn-next');
+    let currentSlide = 0;
+
+    if (slides.length > 1) {
+      const showSlide = (n) => {
+        slides.forEach(s => s.classList.remove('is-active'));
+        currentSlide = (n + slides.length) % slides.length;
+        slides[currentSlide].classList.add('is-active');
+      };
+      prevBtn?.addEventListener('click', () => showSlide(currentSlide - 1));
+      nextBtn?.addEventListener('click', () => showSlide(currentSlide + 1));
+    } else {
+      if(prevBtn) prevBtn.style.display = 'none';
+      if(nextBtn) nextBtn.style.display = 'none';
+    }
+
+    const videoButtons = document.querySelectorAll('.video-playlist-buttons button');
+    const iframe = document.getElementById('main-video-player') as HTMLIFrameElement;
+    videoButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        if(iframe) iframe.src = btn.getAttribute('data-video') || "";
+        videoButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+  </script>
+</Layout>

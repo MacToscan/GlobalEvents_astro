@@ -1,0 +1,63 @@
+@use '../abstracts/variables' as *; 
+@use '../abstracts/mixins' as *;
+
+.header {
+  // 1. POSICIONAMIENTO (Layout)
+  position: fixed; 
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100; // Por encima de todo
+  
+  // 2. APARIENCIA DE LA BARRA
+  background: rgba(5, 5, 5, 0.85); // Negro semitransparente
+  backdrop-filter: blur(10px);       // Efecto cristal
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  
+  padding: $spacing-unit 0;
+  transition: all 0.3s ease;
+
+  &__container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  // 3. GRUPO DE MARCA (Logo + Texto)
+  &__brand {
+    display: flex;
+    align-items: center;
+    gap: $spacing-unit * 1.5;
+    text-decoration: none; // Por si acaso
+  }
+
+  &__logo img {
+    height: 35px; 
+    width: auto;
+    display: block;
+    
+    @include mq($bp-desktop) {
+      height: 50px;
+    }
+  }
+
+  // Estilo del texto "Global Events"
+  .globalevents-navbar {
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: $color-text-primary;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    line-height: 1;
+    
+    &:hover {
+      @include text-gold; 
+    }
+
+    @media (max-width: 360px) {
+      font-size: 0.8rem;
+    }
+  }
+}

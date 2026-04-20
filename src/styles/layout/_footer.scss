@@ -1,0 +1,180 @@
+@use '../abstracts/variables' as *;
+@use '../abstracts/mixins' as *;
+
+.footer {
+  background-color: #000000;
+  color: $color-text-muted;
+  padding: $spacing-unit * 8 0 $spacing-unit * 4;
+  position: relative;
+  z-index: 50;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+  &__content {
+    display: grid;
+    // MÓVIL: 1 sola columna
+    grid-template-columns: 1fr;
+    gap: $spacing-unit * 6;
+    text-align: center;
+
+    // EN MÓVIL: Orden vertical lógico
+    grid-template-areas: 
+      "brand"
+      "links"
+      "contact";
+
+    @include mq($bp-tablet) {
+      // ESCRITORIO: 3 Columnas
+      // Aquí definimos el ancho de cada zona. 
+      // Si quieres Contacto a la izq, dale 1fr. Si la Marca va a la derecha y es grande, dale 1.5fr al final.
+      grid-template-columns: 1fr 1fr 1.5fr; 
+      
+      text-align: left;
+      align-items: start;
+
+      // ¡AQUÍ ESTÁ LA MAGIA!
+      // Dibuja tu web con palabras. Cambia el orden aquí y cambiará en la pantalla.
+      // Ejemplo: "contact links brand" pone Contacto a la izquierda.
+      grid-template-areas: "contact links brand"; 
+    }
+  }
+
+  // --- ASIGNAMOS NOMBRES A LAS CAJAS ---
+  
+  &__brand {
+    grid-area: brand; // Tú te llamas "brand"
+    
+    h3 {
+      font-family: 'Barlow', 'Cinzel', serif;
+      font-size: 1.8rem;
+      color: $color-text-primary;
+      margin-bottom: $spacing-unit * 2;
+      letter-spacing: 2px;
+    }
+
+    p {
+      font-size: 0.9rem;
+      line-height: 1.6;
+      max-width: 400px;
+      margin: 0 auto;
+      @include mq($bp-tablet) { margin: 0; }
+    }
+    
+    .logo-footer {
+        width: 10em;
+        margin-bottom: $spacing-xl;
+        // Ajuste para que en Desktop (si está a la derecha) no se vea raro
+        @include mq($bp-tablet) { 
+            display: block; 
+            /* Si quieres alinear la imagen a la derecha cuando la columna está a la derecha: */
+            /* margin-left: auto; margin-right: 0; */
+        }
+    }
+  }
+
+  &__links {
+    grid-area: links; // Tú te llamas "links"
+    
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-unit * 2;
+
+    h4 {
+      color: $color-text-primary;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: $spacing-unit;
+    }
+
+    a {
+      color: $color-text-muted;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      font-size: 0.95rem;
+
+      &:hover {
+        color: #BF953F;
+        transform: translateX(5px);
+      }
+    }
+  }
+
+  &__contact {
+    grid-area: contact; // Tú te llamas "contact"
+    
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-unit * 2;
+
+    h4 {
+      color: $color-text-primary;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: $spacing-unit;
+    }
+
+    p { font-size: 0.95rem; }
+
+    a {
+      text-decoration: none;
+      color: $color-text-muted;
+      &:hover {
+        @include text-gold
+      }
+    }
+
+    .social-links {
+      display: flex;
+      gap: $spacing-unit * 2;
+      justify-content: center;
+      margin-top: $spacing-unit;
+
+      @include mq($bp-tablet) {
+        justify-content: flex-start;
+      }
+
+      a {
+        color: $color-text-primary;
+        text-decoration: none;
+        font-size: 1.2rem; // Iconos un poco más grandes
+        border: 1px solid rgba(255,255,255,0.2);
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+
+        &:hover {
+          
+          color: #553f13;
+          border-color: #BF953F;
+        }
+      }
+    }
+  }
+
+  // --- Bottom Bar ---
+  &__bottom {
+    margin-top: $spacing-unit * 8;
+    padding-top: $spacing-unit * 3;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    text-align: center;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.3);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    @include mq($bp-tablet) {
+      flex-direction: row;
+      justify-content: space-between;
+    }
+
+    a {
+      color: rgba(255, 255, 255, 0.3);
+      text-decoration: none;
+      &:hover { color: $color-text-primary; }
+    }
+  }
+}

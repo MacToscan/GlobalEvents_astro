@@ -1,0 +1,192 @@
+---
+// Importamos los estilos globales para que el panel mantenga el diseño oscuro y dorado
+import '../styles/main.scss';
+---
+
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Panel de Control | Global Events</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  </head>
+  <body class="admin-body">
+    
+    <nav class="admin-nav">
+      <div class="container admin-nav__container">
+        <div class="admin-nav__brand">
+          <img src="/img/globaleventslogo.png" alt="Logo" class="admin-logo">
+          <span>Panel de Gestión</span>
+        </div>
+        <div class="admin-nav__actions">
+          <span class="admin-user">Hola, Roxana</span>
+          <button id="logout-btn" class="btn-logout" title="Cerrar Sesión" onclick="window.logout()">
+            <i class="fa-solid fa-power-off"></i>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <main class="admin-dashboard">
+      <div class="container">
+        
+        <header class="dashboard-header">
+          <div>
+            <h1 class="dashboard-title">Administración</h1>
+            <p class="dashboard-subtitle">Gestiona las imágenes de la portada</p>
+          </div>
+        </header>
+
+        <div class="admin-section-box">
+          <div class="section-header">
+            <h2><i class="fa-solid fa-star" style="color:gold;"></i> Artistas en Portada</h2>
+            <p style="color: #666; font-size: 0.9rem;">
+                Selecciona la estrella ⭐ en la lista de abajo para destacar un artista.<br>
+                Solo puedes tener <strong>6 activos</strong> al mismo tiempo.
+            </p>
+          </div>
+          
+          <button class="btn btn--gold btn--wide" id="btn-toggle-home-editor">
+             Ver / Editar Portada Actual
+          </button>
+
+          <div id="home-editor-panel" class="home-editor-panel hidden">
+             <div class="home-grid-preview" id="home-artist-list"></div>
+          </div>
+        </div>
+
+        <hr class="admin-divider">
+
+        <div class="admin-header-actions">
+           <h2 class="section-title">Todos los Artistas</h2>
+           <button class="btn btn--outline" id="add-artist-btn">
+             <i class="fa-solid fa-plus"></i> Añadir Nuevo
+           </button>
+        </div>
+
+        <div class="admin-toolbar">
+          <div class="search-input-group">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="admin-search" placeholder="Buscar en la lista...">
+          </div>
+        </div>
+
+        <div class="admin-grid" id="admin-artist-list">
+           </div>
+
+      </div>
+    </main>
+
+    <div id="artist-modal" class="modal">
+      <div class="modal__content">
+        <div class="modal__header">
+          <h2 id="modal-title">Editar Ficha</h2>
+          <button class="modal__close" id="close-modal">&times;</button>
+        </div>
+        
+        <form id="artist-form">
+          <input type="hidden" id="artist-id"> 
+
+          <div class="form-group">
+            <label>Nombre del Artista</label>
+            <input type="text" id="artist-name" required placeholder="Ej: Mago Pop">
+          </div>
+
+          <div class="form-group-row" style="display: flex; gap: 15px;">
+            <div class="form-group" style="flex: 1;">
+              <label>Categoría</label>
+              <input type="text" id="artist-category" list="cat-suggestions" required>
+              <datalist id="cat-suggestions"></datalist>
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label>Zona / Ciudad</label>
+              <input type="text" id="artist-zone" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Biografía / Descripción</label>
+            <textarea id="description" placeholder="Escribe la historia del artista..." required></textarea>
+          </div>
+
+          <hr class="admin-divider" style="border: 0; border-top: 1px dashed #333; margin: 20px 0;">
+
+          <label style="color:white; margin-bottom:10px; display:block;">🔗 Redes y Enlaces</label>
+          <div class="form-group-row" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+             <input type="text" id="social-instagram" placeholder="Instagram URL">
+             <input type="text" id="social-facebook" placeholder="Facebook URL">
+             <input type="text" id="social-website" placeholder="Web Oficial URL">
+             <input type="text" id="social-youtube" placeholder="YouTube Video URL (Principal)">
+             <input type="text" id="video2" placeholder="YouTube Video URL 2">
+             <input type="text" id="video3" placeholder="YouTube Video URL 3">
+          </div>
+
+          <hr class="admin-divider" style="border: 0; border-top: 1px dashed #333; margin: 20px 0;">
+
+          <div class="form-group">
+            <label style="color: #BF953F; display:flex; justify-content:space-between; align-items:center;">
+              <span>📸 Galería de Fotos</span>
+              <span style="font-size:0.7rem; color:#888;">(Sube todas las fotos aquí)</span>
+            </label>
+            
+            <label for="multi-file-input" class="btn-upload-custom">
+               <i class="fa-solid fa-cloud-arrow-up"></i> Añadir Fotos (Selecciona varias)
+            </label>
+            <input type="file" id="multi-file-input" multiple accept="image/*" style="display: none;">
+            
+            <div id="gallery-preview-container" class="gallery-grid"></div>
+          </div>
+
+          <div class="modal__footer">
+            <button type="button" class="btn btn--outline" id="cancel-modal">Cancelar</button>
+            <button type="submit" class="btn btn--gold">Guardar Ficha</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="modal" id="home-edit-modal">
+      <div class="modal__content" style="max-width: 500px;">
+        <div class="modal__header">
+            <h2 style="color: #BF953F;">Editar Portada</h2>
+            <button class="modal__close" id="close-home-modal">&times;</button>
+        </div>
+        
+        <form id="home-edit-form">
+          <input type="hidden" id="home-edit-id">
+    
+          <div style="margin-bottom: 20px; text-align:center;">
+            <h3 id="home-artist-name" style="margin: 0; color: white;">Nombre Artista</h3>
+            <p id="home-artist-cat" style="color: #888; margin: 0; font-size: 0.9rem;">Categoría</p>
+          </div>
+    
+          <div class="form-group" style="background: rgba(255, 215, 0, 0.05); padding: 15px; border-radius: 6px; border: 1px solid #BF953F;">
+            <label for="home-edit-desc" style="color: #BF953F;">★ Frase Gancho (Portada)</label>
+            <input type="text" id="home-edit-desc" placeholder="Ej: Éxito garantizado" maxlength="60" style="width: 100%; box-sizing: border-box;">
+            <small style="color: #666; display:block; margin-top:5px;">Este texto sustituye a la categoría en la Home.</small>
+          </div>
+    
+          <div class="form-group" style="margin-top: 20px;">
+            <label style="color: white; margin-bottom: 10px; display: block;">Selecciona la Foto Principal:</label>
+            <p style="font-size: 0.8rem; color: #aaa; margin-bottom: 10px;">Haz clic en la foto que quieres que se vea en la portada.</p>
+            
+            <div id="cover-selector-container" class="cover-selector-grid"></div>
+          </div>
+    
+          <div class="modal__footer">
+            <button type="button" class="btn btn--outline" id="cancel-home-modal">Cancelar</button>
+            <button type="submit" class="btn btn--gold">Guardar Portada</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <script>import '../main.js';</script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+    
+  </body>
+</html>
