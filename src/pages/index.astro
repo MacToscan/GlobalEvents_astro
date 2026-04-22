@@ -4,7 +4,7 @@ import { db } from '../firebase.js';
 import { collection, getDocs } from 'firebase/firestore';
 
 // 1. FUNCIÓN DE SLUGS (PARA QUE LOS ENLACES NO SE ROMPAN)
-const createSlug = (text) => {
+const createSlug = (text: string) => {
   if (!text) return '';
   return text.toString().toLowerCase()
     .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
@@ -14,7 +14,7 @@ const createSlug = (text) => {
 
 // 2. DESCARGA DE DATOS
 const querySnapshot = await getDocs(collection(db, "artists"));
-let allArtists = []; // Cambiamos const por let para poder ordenar la lista
+let allArtists: any[] = []; 
 
 querySnapshot.forEach((doc) => {
   const data = doc.data();
@@ -50,8 +50,10 @@ const digits = String(totalArtists).padStart(3, '0').split('');
 
       <div class="counter-wrapper">
         <span class="counter-label">ARTISTAS DISPONIBLES:</span>
-        <div class="mechanical-counter">
-          {digits.map(d => <span class="digit">{d}</span>)}
+        <div class="mechanical-counter" id="total-artists-counter">
+          <span class="digit">0</span>
+          <span class="digit">0</span>
+          <span class="digit">0</span>
         </div>
       </div>
 
@@ -111,11 +113,17 @@ const digits = String(totalArtists).padStart(3, '0').split('');
     <div class="section-header">
       <h2 class="section-title">Otros Talentos</h2>
     </div>
-    <div class="carousel-container-relative">
+    
+    <div class="carousel-container-relative" style="position: relative;">
+      
+      <button id="mini-prev" class="mini-control left">&#10094;</button>
+
       <div class="mini-carousel-wrapper">
-        <div id="mini-carousel-track" class="mini-carousel-track">
-          </div>
+        <div id="mini-carousel-track" class="mini-carousel-track"></div>
       </div>
+
+      <button id="mini-next" class="mini-control right">&#10095;</button>
+      
     </div>
   </section>
 
