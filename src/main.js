@@ -53,6 +53,8 @@ async function loadArtistsFromCloud() {
       });
       
       artistsData.sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
+
+      window.globalArtistsData = artistsData;
   
       console.log("📡 Datos descargados de la nube:", artistsData.length);
       refreshAllViews(); 
@@ -175,7 +177,8 @@ function paintGridCards(list) {
                 }
                 <h3 class="card__title">${artist.name}</h3>
                 <p class="card__zone">📍 ${artist.zone}</p>
-                <a href="/artist/${slug}" class="btn btn--gold">Ver Ficha</a>
+                
+                <a href="/artist/${slug}" class="btn btn--gold" style="margin-top: 25px; align-self: flex-start; display: inline-block;">Ver Ficha</a>
               </div>
             </article>`;
         }).join('');
@@ -503,6 +506,8 @@ if (homeForm) {
             });
             loadArtistsFromCloud(); 
             if(homeModal) homeModal.classList.remove('is-visible');
+
+            window.location.reload();
 
         } catch (error) {
             console.error("Error al actualizar portada:", error);

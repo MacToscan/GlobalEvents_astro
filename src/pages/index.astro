@@ -1,4 +1,6 @@
 ---
+export const prerender = false;
+
 import Layout from '../layouts/Layout.astro';
 import { db } from '../firebase.js'; 
 import { collection, getDocs } from 'firebase/firestore';
@@ -141,7 +143,9 @@ const digits = String(totalArtists).padStart(3, '0').split('');
       suggestionsBox.innerHTML = ''; 
       if (!val) { suggestionsBox.style.display = 'none'; return; }
 
-      const matches = allArtistsNames.filter(name => name.toLowerCase().includes(val));
+      // Coge los datos frescos de main.js si existen, o los del servidor por defecto
+      const liveNames = window.globalArtistsData ? window.globalArtistsData.map(a => a.name) : allArtistsNames;
+      const matches = liveNames.filter(name => name.toLowerCase().includes(val));
       
       if (matches.length > 0) {
         matches.slice(0, 10).forEach(name => {
