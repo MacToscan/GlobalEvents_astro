@@ -1,50 +1,48 @@
 ---
+// 1. 🚀 FUERZA EL MODO DIRECTO (Mata el error de getStaticPaths)
+export const prerender = false; 
+
 import Layout from '../../layouts/Layout.astro';
-import { db } from '../../firebase.js'; 
+import { db } from '../../firebase.js';
 import { collection, getDocs } from 'firebase/firestore';
 
-export async function getStaticPaths() {
-  const querySnapshot = await getDocs(collection(db, "artists"));
-  const paths = [];
+// 2. Atrapamos el slug de la URL
+const { slug } = Astro.params;
 
-  const createSlug = (text) => {
-    return text.toString().toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/\s+/g, '-')
-      .replace(/[^\w\-]+/g, '')
-      .replace(/\-\-+/g, '-')
-      .replace(/^-+/, '')
-      .replace(/-+$/, '');
-  };
+// 3. Descargamos los datos (Astro hará esto CADA VEZ que alguien entre)
+const querySnapshot = await getDocs(collection(db, "artists"));
 
-  querySnapshot.forEach((doc) => {
-    const artistData = doc.data();
-    if (!artistData.name) return; 
-    
-    paths.push({
-      params: { slug: createSlug(artistData.name) },
-      props: { artist: artistData }, 
-    });
-  });
+const createSlug = (text: string) => {
+  if (!text) return '';
+  return text.toString().toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, '-').replace(/[^\w\-]+/g, '')
+    .replace(/\-\-+/g, '-').replace(/^-+/, '').replace(/-+$/, '');
+};
 
-  return paths;
+// 4. Buscamos al artista
+let artist: any = null;
+querySnapshot.forEach((doc) => {
+  const data = doc.data();
+  if (createSlug(data.name) === slug) {
+    artist = { id: doc.id, ...data };
+  }
+});
+
+// 5. Si no existe, volvemos a la home
+if (!artist) {
+  return Astro.redirect('/'); 
 }
 
-// 2. RECIBIMOS LOS DATOS DEL ARTISTA
-const { artist } = Astro.props;
-
-// 3. FUNCIÓN MÁGICA PARA YOUTUBE (Copiada de tu web original)
-const getYouTubeEmbedUrl = (url) => {
+// 6. 🎥 LÓGICA DE VÍDEOS (Esto arregla el error "allVideos is not defined")
+const getYouTubeEmbedUrl = (url: string) => {
   if (!url) return null;
   const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
   const match = url.match(regExp);
-  return (match && match[2].length === 11) ? `https://www.youtube.com/embed/${match[2]}` : url;
+  return (match && match[2].length === 11) ? `https://www.youtube.com/embed/${match[2]}` : null;
 };
 
-// Preparamos los vídeos usando el filtro de YouTube
-const mainVideo = artist.videoUrl || (artist.socials && artist.socials.youtube);
-const rawVideos = [mainVideo, artist.videoUrl2, artist.videoUrl3].filter(Boolean);
+const rawVideos = [artist.videoUrl, artist.videoUrl2, artist.videoUrl3];
 const allVideos = rawVideos.map(getYouTubeEmbedUrl).filter(Boolean);
 ---
 

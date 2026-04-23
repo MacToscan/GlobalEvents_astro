@@ -650,33 +650,28 @@ if (form) {
                 }
             };
 
-            if (id) {
-                const docRef = doc(db, "artists", id);
-                const updateData = { ...artistData };
-                delete updateData.isFeatured;
-                delete updateData.homeDescription;
-                
-                const oldArtist = artistsData.find(a => a.id === id);
-                if(oldArtist) {
-                    updateData.isFeatured = oldArtist.isFeatured;
-                    updateData.homeDescription = oldArtist.homeDescription || "";
-                    if (oldArtist && oldArtist.order !== undefined) {
-                        updateData.order = oldArtist.order;
-                    }
-                }
+            // ... dentro del submit del form ...
+if (id) {
+    const docRef = doc(db, "artists", id);
+    const updateData = { ...artistData };
+    
+    // IMPORTANTE: Usamos == en lugar de === para evitar fallos de ID
+    const oldArtist = artistsData.find(a => a.id == id);
+    if(oldArtist) {
+        updateData.isFeatured = oldArtist.isFeatured;
+        updateData.homeDescription = oldArtist.homeDescription || "";
+        updateData.order = oldArtist.order ?? 999;
+    }
 
-                await updateDoc(docRef, updateData);
-                alert("¡Ficha modificada correctamente!");
-            } else {
-                await addDoc(collection(db, "artists"), artistData);
-                alert("¡Artista guardado en la nube correctamente!");
-            }
+    await updateDoc(docRef, updateData);
+    alert("¡Ficha modificada correctamente!");
+} else {
+    await addDoc(collection(db, "artists"), artistData);
+    alert("¡Artista guardado en la nube!");
+}
 
-            loadArtistsFromCloud(); 
-            if(modal) modal.classList.remove('is-visible'); 
-            if(form) form.reset(); 
-            currentGallery = []; 
-            renderGalleryPreview();
+// 🔄 LA CLAVE: Refrescamos la web entera para limpiar la memoria
+window.location.reload();
 
         } catch (error) {
             console.error("❌ Error grave al guardar:", error);
@@ -699,8 +694,8 @@ window.deleteArtist = async (id) => {
     if (!confirm('¿Seguro que quieres borrar este artista de la nube?')) return;
     try {
         await deleteDoc(doc(db, "artists", id));
-        loadArtistsFromCloud();
         alert("¡Artista eliminado correctamente!");
+        window.location.reload(); // 👇 AÑADE ESTO AQUÍ TAMBIÉN 👇
     } catch (error) {
         alert("No se pudo borrar: " + error.message);
     }
