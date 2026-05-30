@@ -36,13 +36,13 @@
 
   // Logo Redondo en el Hero
   &__brand-img {
-    width: 250px;
+    width: 28dvh;
     height: auto;
     margin-top: $spacing-xl * 4;
     
 
     @include mq($bp-tablet) {
-      width: 540px;
+      width: 22rem;
     }
   }
 
