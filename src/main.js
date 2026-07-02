@@ -105,27 +105,30 @@ function populateCategories() {
 const normalize = (str) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
 function executeSearch() {
-    const nameVal = normalize(searchInput.value.trim()); // Normalizamos aquí
+    const nameVal = normalize(searchInput.value.trim()); // Usamos normalize aquí
     const catVal = searchCat.value;
     const searchZone = document.getElementById('search-zone');
     const zoneVal = searchZone ? searchZone.value : ""; 
 
+    // 1. REGLA DE ORO: Si no hay ningún filtro, restauramos la portada original
     if (nameVal === "" && catVal === "" && zoneVal === "") {
         const featuredArtists = artistsData.filter(a => a.isFeatured).slice(0, 6);
         paintGridCards(featuredArtists);
         return;
     }
 
+    // 2. Si hay filtros, buscamos coincidencias con normalización
     const foundArtists = artistsData.filter(a => {
-        // Normalizamos el nombre del artista de la DB para comparar
-        const matchName = normalize(a.name).includes(nameVal); 
+        const matchName = normalize(a.name).includes(nameVal);
         const matchCat = (catVal === "" || a.category === catVal);
         const matchZone = (zoneVal === "" || a.zone === zoneVal); 
         return matchName && matchCat && matchZone;
     });
 
+    // 3. Pintamos los resultados
     paintGridCards(foundArtists);
 }
+
 
 function renderHomeArtists(list) {
   if (!gridContainer) return;
@@ -153,31 +156,6 @@ function renderHomeArtists(list) {
   `).join('');
 }
 
-function executeSearch() {
-    const nameVal = searchInput.value.toLowerCase().trim();
-    const catVal = searchCat.value;
-    const searchZone = document.getElementById('search-zone');
-    const zoneVal = searchZone ? searchZone.value : ""; 
-
-    // 1. REGLA DE ORO: Si no hay ningún filtro, restauramos la portada original
-    if (nameVal === "" && catVal === "" && zoneVal === "") {
-        // Cogemos solo los destacados, máximo 6
-        const featuredArtists = artistsData.filter(a => a.isFeatured).slice(0, 6);
-        paintGridCards(featuredArtists);
-        return; // Paramos aquí la función
-    }
-
-    // 2. Si hay filtros, buscamos coincidencias
-    const foundArtists = artistsData.filter(a => {
-        const matchName = a.name.toLowerCase().includes(nameVal);
-        const matchCat = (catVal === "" || a.category === catVal);
-        const matchZone = (zoneVal === "" || a.zone === zoneVal); 
-        return matchName && matchCat && matchZone;
-    });
-
-    // 3. Pintamos los resultados encontrados
-    paintGridCards(foundArtists);
-}
 
 // Función de apoyo para pintar las tarjetas idénticas a las de Astro
 // Función de apoyo para pintar las tarjetas idénticas a las de Astro
