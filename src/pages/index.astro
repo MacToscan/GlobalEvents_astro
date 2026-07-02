@@ -46,7 +46,7 @@ const digits = String(totalArtists).padStart(3, '0').split('');
   
   <section class="hero" id="home">
     <div class="container hero__content">
-      <img src="/img/globaleventslogo.webp" alt="Global Events logo" class="hero__brand-img" " >
+      <img src="/img/globaleventslogo.webp" alt="Global Events logo" class="hero__brand-img"  >
       <h1 class="hero__title">GLOBAL EVENTS</h1>
       <p class="hero__subtitle">Contrata a los mejores artistas para tu evento</p>
 
@@ -137,15 +137,20 @@ const digits = String(totalArtists).padStart(3, '0').split('');
 
     if (!searchInput || !suggestionsBox || !searchBtn) return;
 
+    // Añade esta función arriba dentro del script en index.astro
+    
+    const normalize = (str) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
     // 1. Lógica de Sugerencias (Predictor)
     searchInput.addEventListener('input', () => {
-      const val = searchInput.value.toLowerCase().trim();
-      suggestionsBox.innerHTML = ''; 
-      if (!val) { suggestionsBox.style.display = 'none'; return; }
+      const val = normalize(searchInput.value.trim()); // Normalizamos el input del usuario
+  suggestionsBox.innerHTML = ''; 
+  if (!val) { suggestionsBox.style.display = 'none'; return; }
 
-      // Coge los datos frescos de main.js si existen, o los del servidor por defecto
-      const liveNames = window.globalArtistsData ? window.globalArtistsData.map(a => a.name) : allArtistsNames;
-      const matches = liveNames.filter(name => name.toLowerCase().includes(val));
+  const liveNames = window.globalArtistsData ? window.globalArtistsData.map(a => a.name) : allArtistsNames;
+  
+  // Normalizamos cada nombre de la base de datos antes de filtrar
+  const matches = liveNames.filter(name => normalize(name).includes(val));
       
       if (matches.length > 0) {
         matches.slice(0, 10).forEach(name => {

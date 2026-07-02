@@ -101,6 +101,32 @@ function populateCategories() {
   if (document.getElementById('admin-category-filter')) document.getElementById('admin-category-filter').innerHTML = `<option value="all">Todas las categorías</option>${catOptions}`;
 }
 
+// Define esta función en main.js para reutilizarla
+const normalize = (str) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+function executeSearch() {
+    const nameVal = normalize(searchInput.value.trim()); // Normalizamos aquí
+    const catVal = searchCat.value;
+    const searchZone = document.getElementById('search-zone');
+    const zoneVal = searchZone ? searchZone.value : ""; 
+
+    if (nameVal === "" && catVal === "" && zoneVal === "") {
+        const featuredArtists = artistsData.filter(a => a.isFeatured).slice(0, 6);
+        paintGridCards(featuredArtists);
+        return;
+    }
+
+    const foundArtists = artistsData.filter(a => {
+        // Normalizamos el nombre del artista de la DB para comparar
+        const matchName = normalize(a.name).includes(nameVal); 
+        const matchCat = (catVal === "" || a.category === catVal);
+        const matchZone = (zoneVal === "" || a.zone === zoneVal); 
+        return matchName && matchCat && matchZone;
+    });
+
+    paintGridCards(foundArtists);
+}
+
 function renderHomeArtists(list) {
   if (!gridContainer) return;
   if (list.length === 0) {
